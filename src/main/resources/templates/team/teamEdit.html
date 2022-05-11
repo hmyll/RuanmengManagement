@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>编辑团队</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/layuimini.css?v=2.0.4.2}" media="all">
+    <link rel="stylesheet" th:href="@{/css/themes/default.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body{
+            padding: 20px;
+        }
+        .layui-input{height:30px;} /* layui-input 默认太高了，这里固定高度*/
+        label.required:after {   /* 给红色的必填项打红色星号（文字后）如果打前面用before*/
+            content: ' *';
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<form class="layui-form" action="" th:object="${team}">
+    <input type="hidden" th:field="*{id}" >
+    <div class="layui-form-item">
+        <label class="layui-form-label required">名称</label>
+        <div class="layui-input-block">
+            <input type="text" id="name" name="name" th:field="*{name}" required="required"  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">导师</label>
+        <div class="layui-input-block" >
+            <select th:field="*{teacherId}" lay-verify="required"  th:disabled="*{teacherAdmit + adminAdmit == 2}" class="layui-input layui-disabled">
+                <option value="">请选择</option>
+                <option th:each="teacher:${teacherList}" th:value="${teacher.id}">
+                    <span th:text="${teacher.name}"></span>
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" th:if="*{teacherAdmit==1&&adminAdmit==1}">
+        <label class="layui-form-label required">队长</label>
+        <div class="layui-input-block">
+            <select th:field="*{captionId}" lay-verify="required" >
+                <option value="">请选择</option>
+                <option th:each="student:${studentList}" th:value="${student.id}">
+                    <span th:text="${student.name}"></span>
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">邮箱</label>
+        <div class="layui-input-block">
+            <input type="email" th:field="*{email}" required="required"  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">成立时间</label>
+        <div class="layui-input-block">
+            <input type="text" th:field="*{setup}" required="required"  lay-verify="required" placeholder="请输入电话号码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <input type="hidden" th:field="*{teacherAdmit}" >
+    <input type="hidden" th:field="*{adminAdmit}" >
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">团队介绍</label>
+        <div class="layui-input-block">
+            <textarea th:field="*{description}" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <div th:if="*{teacherAdmit + adminAdmit < 2}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">样表下载</label>
+            <div class="layui-input-block">
+                <a href="download" style="color: blue" >【大学生创新创业孵化基地团队入驻申请表.doc】</a>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">上传申请表</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" id="uploadPhoto">
+                    <i class="layui-icon">&#xe67c;</i>上传申请表
+                </button>
+            </div>
+        </div>
+        <input type="hidden" id="photoImage" name="appForm" value="">
+
+        <div class="layui-form-item layui-form-text" >
+            <div class="layui-input-block">
+                <a id="image_yl" style="color: blue"> </a>
+                <button type="button" class="layui-btn layui-btn-danger" id="delfile" onclick="delFile();">删除申请表</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button id="btn-sumbit" class="layui-btn" lay-submit lay-filter="btn-submit-filter">立即提交</button>
+        </div>
+    </div>
+
+</form>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+    <script th:inline="javascript">
+        var ctxPath = [[@{/}]];
+        layui.use(['laydate','table','form','upload'], function(){
+            var laydate = layui.laydate;
+            var table = layui.table;
+            var form = layui.form;
+            var $ = layui.$;
+            var upload = layui.upload;
+
+            var imagePath  = [[${team.appForm}]];
+            if(imagePath != null && imagePath != ""){
+                $(document).ready(function(){
+                    document.getElementById("image_yl").innerText=[[${team.name}]]+"创新创业孵化基地团队入驻申请表.doc";
+                    $("#image_yl").attr("href",imagePath);
+                    $("#photoImage").attr("value",imagePath);
+                });
+            }
+
+            delFile = function () {
+                document.getElementById("image_yl").innerText="";
+                $("#image_yl").attr("href","");
+                $("#photoImage").attr("value",'');
+                $.post(ctxPath + "notice/deletePicture/"+imagePath);
+                layer.msg("删除成功！");
+            };
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#uploadPhoto' //绑定元素
+                ,accept: 'file'
+                ,url: ctxPath + 'notice/image' //上传接口
+                ,done: function(res){
+                    //上传完毕回调
+                    if(res.code == 1){
+                        layer.msg(res.msg);
+                        imagePath = "http://localhost:8080/pictures/"+res.data.src;
+                        document.getElementById("image_yl").innerText=res.data.src;
+                        $("#image_yl").attr("href",imagePath);
+                        $("#photoImage").attr("value",imagePath);
+                    }else {
+                        layer.msg(res.msg);
+                    }
+                }
+                ,error: function(){
+                    //请求异常回调
+                    layer.msg("上传失败，请联系管理员！");
+                }
+            });
+
+            //日期模块
+            laydate.render({
+                elem: '[name="setup"]' //指定元素
+            });
+
+            //表单提交
+            form.on('submit(btn-submit-filter)', function(data){
+                //将登录按钮置灰不可用
+                $("#btn-sumbit").attr("disabled","disabled").addClass("layui-btn-disabled");
+
+                //异步请求提交数据
+                var url = ctxPath + "team";
+                data.field._method = "PUT";
+                $.post(url,data.field,function (response) {
+                    if(response.code == 0){
+                        layer.msg(response.msg,{
+                            icon: 1,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function(){
+                            //提交成功则关闭表单，并且重新刷新表格
+                            // parent.refreshTable();
+                            // var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            // parent.layer.close(index); //再执行关闭
+                            parent.location.reload();
+                         });
+                    }else{
+                        //将登录按钮取消置灰，恢复可用
+                        $("#btn-sumbit").removeAttr("disabled","disabled").removeClass("layui-btn-disabled");
+                        //失败则提示错误信息，窗口不关闭
+                        layer.msg("修改失败，请联系管理员！", {
+                            icon: 2,
+                            anim: 6
+                        });
+                    }
+                });
+
+
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+        });
+    </script>
+</body>
+</html>

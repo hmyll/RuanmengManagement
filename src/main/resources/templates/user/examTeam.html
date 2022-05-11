@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>编辑成员</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/layuimini.css?v=2.0.4.2}" media="all">
+    <link rel="stylesheet" th:href="@{/css/themes/default.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body{
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<form class="layui-form" action="" >
+    <div class="layui-form-item">
+        <label class="layui-form-label">导师审核</label>
+        <div class="layui-input-block">
+            <input type="text" th:if="${session.teamInfo.teacherAdmit==0}" value="待审核"  disabled  autocomplete="off" class="layui-input">
+            <input type="text" th:if="${session.teamInfo.teacherAdmit==1}" value="审核通过" style="color: green" disabled  autocomplete="off" class="layui-input">
+            <input type="text" th:if="${session.teamInfo.teacherAdmit==-1}" value="审核不通过" style="color: red" disabled  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">导师意见</label>
+        <div class="layui-input-block">
+            <textarea th:text="${session.teamInfo.teacherNote}" disabled class="layui-textarea" />
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">管理员审核</label>
+        <div class="layui-input-block">
+            <input type="text" th:if="${session.teamInfo.adminAdmit==0}" value="待审核" disabled  autocomplete="off" class="layui-input">
+            <input type="text" th:if="${session.teamInfo.adminAdmit==1}" value="审核通过" style="color: green" disabled  autocomplete="off" class="layui-input">
+            <input type="text" th:if="${session.teamInfo.adminAdmit==-1}" value="审核不通过" style="color: red" disabled  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">管理员意见</label>
+        <div class="layui-input-block">
+            <textarea th:text="${session.teamInfo.adminNote}" disabled class="layui-textarea" />
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button id="btn_edit"  th:if="${(session.teamInfo.teacherAdmit==-1||session.teamInfo.adminAdmit==-1)}" class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="edit-filter">修改团队信息</button>
+            <button th:if="${!(session.teamInfo.teacherAdmit==-1||session.teamInfo.adminAdmit==-1)}" disabled readonly class="layui-btn layui-btn-fluid layui-disabled"  lay-filter="edit-filter">修改团队信息（若审核不通过可修改）</button>
+        </div>
+    </div>
+
+</form>
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<script th:src="@{/lib/jq-module/jquery.particleground.min.js}" charset="utf-8"></script>
+<script th:inline="javascript">
+    var ctxPath = [[@{/}]];
+
+        layui.use(['form'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.$;
+
+
+            $("#btn_edit").click(function () {
+                //将登录按钮置灰不可用
+                $("#edit-filter").attr("disabled","disabled").addClass("layui-btn-disabled");
+                layer.open({
+                    type: 2,
+                    title: "修改团队信息",
+                    area: ['100%', '100%'],
+                    content: ctxPath + 'team/editUI',
+                });
+                //将登录按钮取消置灰，恢复可用
+                $("#edit-filter").removeAttr("disabled","disabled").removeClass("layui-btn-disabled");
+                return false;
+            });
+        });
+</script>
+</body>
+</html>

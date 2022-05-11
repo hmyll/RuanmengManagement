@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>编辑成员</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/layuimini.css?v=2.0.4.2}" media="all">
+    <link rel="stylesheet" th:href="@{/css/themes/default.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body{
+            padding: 20px;
+        }
+        label.required:after {   /* 给红色的必填项打红色星号（文字后）如果打前面用before*/
+            content: ' *';
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<form class="layui-form" action="" th:object="${demand}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">主题</label>
+        <div class="layui-input-block">
+            <input type="text"    th:field="*{title}" disabled  autocomplete="off" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">留言内容</label>
+        <div class="layui-input-block">
+            <textarea th:field="*{request}" disabled class="layui-textarea" />
+            <tip >提交时间：<span th:text="*{#dates.format(requestTime, 'yyyy-MM-dd  HH:mm')}"></span></tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" th:if="${session.userInfo.status == 1}">
+        <label class="layui-form-label">团队</label>
+        <div class="layui-input-block">
+            <select th:field="*{teamId}" th:disabled="${session.userInfo.status == 1}">
+                <option value="">请选择</option>
+                <option th:each="team:${teamList}" th:value="${team.id}">
+                    <span th:text="${team.name}"></span>
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">回复内容</label>
+        <div class="layui-input-block">
+            <textarea th:field="*{response}" disabled class="layui-textarea" />
+            <tip >回复时间：<span th:text="*{#dates.format(responseTime, 'yyyy-MM-dd  HH:mm')}"></span></tip>
+        </div>
+    </div>
+
+
+
+</form>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+    <script th:inline="javascript">
+    </script>
+</body>
+
+</html>

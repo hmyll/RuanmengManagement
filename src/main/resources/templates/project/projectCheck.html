@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>查看公告</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/layuimini.css?v=2.0.4.2}" media="all">
+    <link rel="stylesheet" th:href="@{/css/themes/default.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body{
+            padding: 20px;
+        }
+        .titlestyle66144 {
+            font-family: 微软雅黑;
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        .timestyle66144 {
+            font-family: 微软雅黑;
+            font-size: 10pt;
+        }
+        .contentstyle66144 {
+            text-align: justify;
+            line-height: 200%;
+            text-indent: 24px;
+            font-family: 微软雅黑;
+            font-size: 10pt;
+        }
+        .winstyle66144 {
+            font-size: 9pt;
+            font-family: 宋体;
+        }
+    </style>
+</head>
+<body>
+
+<table border="0" class="winstyle66144" width="100%" cellspacing="0" cellpadding="0" >
+    <form class="layui-form" action="" th:object="${notice}">
+    <tbody><tr><td class="titlestyle66144" align="center">
+        <p th:text="*{title}"></p>
+    </td></tr>
+    <tr height="30"><td align="center">
+        <span class="timestyle66144">作者:</span>
+        <span class="timestyle66144" th:text="*{author}"></span>
+        <span class="timestyle66144" th:text="*{#dates.format(time,'yyyy-MM-dd') }"> </span>
+        <span class="timestyle66144" > （</span><span class="timestyle66144" >点击:</span>
+        <span class="timestyle66144" th:text="*{count}"></span>
+        <span class="timestyle66144">)</span>
+    </td></tr>
+
+    <tr><td class="contentstyle66144">
+        <div class="c66144_content" id="vsb_newscontent"><div id="vsb_content_4">
+            <div class="v_news_content">
+                <p th:text="*{content}"></p>
+                <p style="text-align: center"><img name="filename" id="image_yl" alt="" ></p>
+        </div></div>
+        </div>
+    </td></tr>
+
+    <tr><td class="pagestyle66144" align="left">
+    </td></tr>
+    <tr><td><div id="div_vote_id"></div></td></tr>
+    <tr><td align="left"><span>
+
+      </span></td></tr>
+
+    <tr>
+        <td align="center">
+
+        </td>
+    </tr>
+    </tbody>
+    </form>
+</table>
+<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<script th:inline="javascript">
+    var ctxPath = [[@{/}]];
+        layui.use(['upload'], function(){
+            var $ = layui.$;
+            var imagePath  = [[${notice.picture}]];
+            if(imagePath != null){
+                $(document).ready(function(){
+                    $("#image_yl").attr("style","width: 400px;");
+                    $("#image_yl").attr("src","http://localhost:8080/pictures/"+imagePath);
+                });
+            }
+
+        });
+</script>
+
+</body>
+</html>

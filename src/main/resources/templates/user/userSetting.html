@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>基本资料</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/layuimini.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/themes/default.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        .layui-form-item .layui-input-company {width: auto;padding-right: 10px;line-height: 38px;}
+        .registertimeColor{
+            color: #8c8c8c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-form layuimini-form">
+            <form class="layui-form" action="" >
+                <input type="hidden" name="id" th:value="${session.userInfo.id}" >
+            <div class="layui-form-item">
+                <label class="layui-form-label required">用户名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" th:value="${session.userInfo.name}" lay-verify="required"  lay-reqtext="用户名称不能为空" placeholder="请输入用户名称"   class="layui-input">
+                    <tip>填写用户名称。</tip>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">登录名称</label>
+                <div class="layui-input-block">
+                    <input type="text"  name="loginname" th:value="${session.userInfo.loginname}" lay-verify="required" lay-reqtext="登录名称不能为空" placeholder="请输入登录名称"  class="layui-input">
+                    <tip>填写登录时的账号名称。</tip>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">手机号</label>
+                <div class="layui-input-block">
+                    <input type="number" name="phone" th:value="${session.userInfo.phone}" lay-verify="required" lay-reqtext="手机号不能为空" placeholder="请输入手机号"   class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required" >邮箱</label>
+                <div class="layui-input-block">
+                    <input type="email" name="email" th:value="${session.userInfo.email}" lay-reqtext="邮箱不能为空"  placeholder="请输入邮箱"   class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注信息</label>
+                <div class="layui-input-block">
+                    <textarea name="note" th:text="${session.userInfo.note}" class="layui-textarea" placeholder="请输入备注信息"> </textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">注册时间</label>
+                <div class="layui-input-block" >
+                     <input type="text"  name="registertime" th:value="${#dates.format(session.userInfo.registertime, 'yyyy-MM-dd')}" disabled readonly class="layui-input layui-disabled">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button id="btn-submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="btn-submit-filter">确认保存</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<script th:src="@{/js/lay-config.js}" charset="utf-8"></script>
+<script th:inline="javascript">
+    var ctxPath = [[@{/}]];
+    layui.use(['form','miniTab'], function () {
+        var form = layui.form;
+        var  layer = layui.layer;
+        var  miniTab = layui.miniTab;
+        var $ = layui.$;
+
+        //监听提交
+        form.on('submit(btn-submit-filter)', function (data) {
+            //将登录按钮置灰不可用
+            $("#btn-submit").attr("disabled","disabled").addClass("layui-btn-disabled");
+
+            //异步请求提交数据
+            var url =  ctxPath + "user/setting";
+            data.field._method = "PUT";
+            $.post(url,data.field,function (response) {
+                if(response.code == 0){
+                    layer.msg(response.msg,{
+                        icon: 1,
+                        time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                    }, function(){
+                        parent.location.reload();
+                    });
+                }else{
+                    //失败则提示错误信息，窗口不关闭
+                    layer.msg(response.msg, {
+                        icon: 2,
+                        anim: 6
+                    }, function(){
+                        //将登录按钮取消置灰，恢复可用
+                        $("#btn-submit").removeAttr("disabled","disabled").removeClass("layui-btn-disabled");
+                    });
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+    });
+</script>
+</body>
+</html>

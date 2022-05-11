@@ -1,0 +1,72 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "welcome"
+  },
+  "logoInfo": {
+    "title": "AYNU",
+    "image": "images/aynu.png",
+    "href": "index"
+  },
+  "menuInfo": [
+    {
+      "title": "常规管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "查看公告",
+          "href": "notice/UserView",
+          "icon": "fa fa-bullhorn",
+          "target": "_self"
+        },
+        {
+          "title": "成员管理",
+          "href": "student",
+          "icon": "layui-icon layui-icon-user",
+          "target": "_self"
+        },
+        {
+          "title": "查看团队",
+          "href": "team",
+          "icon": "layui-icon layui-icon-chart-screen",
+          "target": "_self"
+        },
+        {
+          "title": "查看导师",
+          "href": "teacher",
+          "icon": "layui-icon layui-icon-username",
+          "target": "_self"
+        },
+        {
+          "title": "团队成果",
+          "href": "",
+          "icon": "fa fa-trophy",
+          "target": "_self",
+          "child": [
+            {
+              "title": "成果管理",
+              "href": "project",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "查看成果",
+              "href": "project/allPassProject",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "留言区",
+          "href": "demand/teamView",
+          "icon": "fa fa-plus-square",
+          "target": "_self"
+        }
+      ]
+    }
+
+  ]
+}

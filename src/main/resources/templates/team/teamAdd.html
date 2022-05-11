@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/layuimini.css?v=2.0.4.2}" media="all">
+    <link rel="stylesheet" th:href="@{/css/themes/default.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body{
+            padding: 20px;
+        }
+        .layui-input{height:30px;} /* layui-input 默认太高了，这里固定高度*/
+        label.required:after {   /* 给红色的必填项打红色星号（文字后）如果打前面用before*/
+            content: ' *';
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<form class="layui-form" action="">
+
+    <!--<div class="layui-form-item">-->
+        <!--<label class="layui-form-label">身&nbsp;&nbsp;份</label>-->
+        <!--<div class="layui-input-block">-->
+            <!--<input type="radio" name="admin" value="1" title="管理员" checked>-->
+            <!--<input type="radio" name="admin" value="0" title="用户"><br>-->
+            <!--<tip>管理员有查看和编辑的权限，用户只有查看的权限。</tip>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required" >团队名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" required  lay-verify="required" placeholder="请输入团队名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">指导老师</label>
+        <div class="layui-input-block">
+            <select name="teacherId" lay-verify="required" >
+                <option value="">请选择</option>
+                <option th:each="teacher:${teacherList}" th:value="${teacher.id}">
+                    <span th:text="${teacher.name}"></span>
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">邮&nbsp;&nbsp;箱</label>
+        <div class="layui-input-block">
+            <input type="email" name="email" lay-verify="email"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">成立时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="setup"  lay-verify="required" placeholder="请输入加入时间" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">简介</label>
+        <div class="layui-input-block">
+            <textarea name="description" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">账号</label>
+        <div class="layui-input-block">
+            <input type="text" name="loginName" required  lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+            <tip>登录时的账号。</tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">密&nbsp;&nbsp;码</label>
+        <div class="layui-input-block">
+            <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">确认密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="again_Password" required  lay-verify="required" placeholder="请再次输入密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <input type="hidden" name="status" value="3" >
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">样表下载</label>
+        <div class="layui-input-block">
+            <a href="download" style="color: blue" >【大学生创新创业孵化基地团队入驻申请表.doc】</a>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">上传申请表</label>
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" id="uploadPhoto">
+                <i class="layui-icon">&#xe67c;</i>上传申请表
+            </button>
+        </div>
+    </div>
+    <input type="hidden" id="photoImage" name="appForm" value="">
+
+    <div class="layui-form-item layui-form-text" >
+        <div class="layui-input-block">
+            <a id="image_yl" style="color: blue"> </a>
+            <button type="button" class="layui-btn layui-btn-danger" id="delfile" onclick="delFile();">删除申请表</button>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button id="btn-sumbit" class="layui-btn" lay-submit lay-filter="btn-submit-filter">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+
+</form>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+    <script th:inline="javascript">
+        var ctxPath = [[@{/}]];
+        layui.use(['laydate','table','form','upload'], function(){
+            var laydate = layui.laydate;
+            var table = layui.table;
+            var form = layui.form;
+            var $ = layui.$;
+            var upload = layui.upload;
+
+            var imagePath = null;
+            delFile = function () {
+                document.getElementById("image_yl").innerText="";
+                $("#image_yl").attr("href","");
+                $("#photoImage").attr("value",'');
+                $.post(ctxPath + "notice/deletePicture/"+imagePath);
+                layer.msg("删除成功！");
+            };
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#uploadPhoto' //绑定元素
+                ,accept: 'file'
+                ,url: ctxPath + 'notice/image' //上传接口
+                ,done: function(res){
+                    //上传完毕回调
+                    if(res.code == 1){
+                        layer.msg(res.msg);
+                        imagePath = "http://localhost:8080/pictures/"+res.data.src;
+                        document.getElementById("image_yl").innerText=res.data.src;
+                        $("#image_yl").attr("href",imagePath);
+                        $("#photoImage").attr("value",imagePath);
+                    }else {
+                        layer.msg(res.msg);
+                    }
+                }
+                ,error: function(){
+                    //请求异常回调
+                    layer.msg("上传失败，请联系管理员！");
+                }
+            });
+
+            laydate.render({
+                elem: '[name="setup"]' //指定元素
+            });
+
+            //表单提交
+            form.on('submit(btn-submit-filter)', function(data){
+                //将登录按钮置灰不可用
+                $("#btn-sumbit").attr("disabled","disabled").addClass("layui-btn-disabled");
+
+                //异步请求提交数据
+                var url = ctxPath + "user/teamAdd";
+                $.post(url,data.field,function (response) {
+                    if(response.code == 0){
+                        layer.msg(response.msg,{
+                            icon: 1,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function(){
+                            //提交成功则跳转到审核页面
+                            window.location.href= ctxPath + 'user/examTeamUI';
+                        });
+                    }else{
+                        //将登录按钮取消置灰，恢复可用
+                        $("#btn-sumbit").removeAttr("disabled","disabled").removeClass("layui-btn-disabled");
+                        //失败则提示错误信息，窗口不关闭
+                        layer.msg(response.msg, {
+                            icon: 2,
+                            anim: 6
+                        });
+                    }
+                });
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+        });
+    </script>
+</body>
+</html>

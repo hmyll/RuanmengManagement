@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>选择团队</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/layuimini.css?v=2.0.4.2}" media="all">
+    <link rel="stylesheet" th:href="@{/css/themes/default.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body{
+            padding: 20px;
+        }
+        .layui-form-label {
+            float: left;
+            display: block;
+            padding: 9px 15px;
+            width: 40px;
+            font-weight: 400;
+            line-height: 20px;
+            text-align: right;
+        }
+        .layui-input{height:30px;} /* layui-input 默认太高了，这里固定高度*/
+        label.required:after {   /* 给红色的必填项打红色星号（文字后）如果打前面用before*/
+            content: ' *';
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<form class="layui-form"  action="" >
+
+    <div class="layui-form-item" >
+        <label class="layui-form-label">团队</label>
+        <div class="layui-input-block">
+            <select name="teamId" lay-verify="required" >
+                <option value="">请选择</option>
+                <option th:each="team:${teamList}" th:value="${team.id}">
+                    <span th:text="${team.name}"></span>
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" >
+        <div class="layui-input-block">
+            <button id="btn-sumbit" class="layui-btn" lay-submit lay-filter="btn-submit-filter" >立即提交</button>
+        </div>
+    </div>
+
+</form>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+    <script th:inline="javascript">
+        var ctxPath = [[@{/}]];
+        layui.use(['laydate','table','form'], function(){
+            var form = layui.form;
+            var $ = layui.$;
+
+            //表单提交
+            form.on('submit(btn-submit-filter)', function(data){
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(index); //再执行关闭
+
+                parent.layer.open({
+                    type: 2,
+                    title: "新增团队成果",
+                    shadeClose : true,
+                    resize: true,
+                    area: ['100%','100%'],
+                    content: ctxPath + 'project/addUI/' +data.field.teamId
+                });
+
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+        });
+    </script>
+</body>
+</html>

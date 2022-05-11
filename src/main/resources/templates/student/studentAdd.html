@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>新增成员</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/layuimini.css?v=2.0.4.2}" media="all">
+    <link rel="stylesheet" th:href="@{/css/themes/default.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body{
+            padding: 20px;
+        }
+        .layui-input{height:30px;} /* layui-input 默认太高了，这里固定高度*/
+        label.required:after {   /* 给红色的必填项打红色星号（文字后）如果打前面用before*/
+            content: ' *';
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+    <label class="layui-form-label required">姓名</label>
+    <div class="layui-input-block">
+        <input type="text" name="name" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">学号</label>
+        <div class="layui-input-block">
+            <input type="text" name="stuId" required  lay-verify="number" placeholder="请输入学号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">性别</label>
+        <div class="layui-input-block">
+            <input type="radio" name="gender" value="男" title="男" checked>
+            <input type="radio" name="gender" value="女" title="女">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-block">
+            <input type="text" name="age"  placeholder="请输入年龄" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">班级</label>
+        <div class="layui-input-block">
+            <input type="text" name="classname"   placeholder="请输入班级" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">电话号码</label>
+        <div class="layui-input-block">
+            <input type="text" name="phone" required  lay-verify="number" placeholder="请输入电话号码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">加入时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="joinTime"    placeholder="请输入加入时间" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea name="note" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button id="btn-sumbit" class="layui-btn" lay-submit lay-filter="btn-submit-filter">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+
+</form>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+    <script th:inline="javascript">
+        var ctxPath = [[@{/}]];
+        layui.use(['laydate','table','form'], function(){
+            var laydate = layui.laydate;
+            var table = layui.table;
+            var form = layui.form;
+            var $ = layui.$;
+
+            //日期模块
+                laydate.render({
+                elem: '[name="joinTime"]' //指定元素
+            });
+
+            //表单提交
+            form.on('submit(btn-submit-filter)', function(data){
+                //将登录按钮置灰不可用
+                $("#btn-sumbit").attr("disabled","disabled").addClass("layui-btn-disabled");
+
+                //异步请求提交数据
+                var url = ctxPath + "student";
+                $.post(url,data.field,function (response) {
+                    if(response.code == 0){
+                        layer.msg(response.msg,{
+                            icon: 1,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function(){
+                            //提交成功则关闭表单，并且重新刷新表格
+                            parent.refreshTable();
+                            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(index); //再执行关闭
+                         });
+                    }else{
+                        //将登录按钮取消置灰，恢复可用
+                        $("#btn-sumbit").removeAttr("disabled","disabled").removeClass("layui-btn-disabled");
+                        //失败则提示错误信息，窗口不关闭
+                        layer.msg(response.msg, {
+                            icon: 2,
+                            anim: 6
+                        });
+                    }
+                });
+
+
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+        });
+    </script>
+</body>
+</html>

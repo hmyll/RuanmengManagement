@@ -1,0 +1,59 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "welcome"
+  },
+  "logoInfo": {
+    "title": "AYNU",
+    "image": "images/aynu.png",
+    "href": "index"
+  },
+  "menuInfo": [
+    {
+      "title": "常规管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+
+        {
+          "title": "公告管理",
+          "href": "notice",
+          "icon": "fa fa-bullhorn",
+          "target": "_self"
+        },
+        {
+          "title": " 查看成员",
+          "href": "student/listReadOnly",
+          "icon": "layui-icon layui-icon-user",
+          "target": "_self"
+        },
+        {
+          "title": "团队审核",
+          "href": "team",
+          "icon": "layui-icon layui-icon-chart-screen",
+          "target": "_self"
+        },
+        {
+          "title": "导师审核",
+          "href": "teacher",
+          "icon": "layui-icon layui-icon-username",
+          "target": "_self"
+        },
+        {
+          "title": "成果审核",
+          "href": "project",
+          "icon": "fa fa-trophy",
+          "target": "_self"
+        },
+        {
+          "title": "留言回复",
+          "href": "demand",
+          "icon": "fa fa-plus-square",
+          "target": "_self"
+        }
+      ]
+    }
+
+  ]
+}
